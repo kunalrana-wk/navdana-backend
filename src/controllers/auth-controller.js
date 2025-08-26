@@ -6,7 +6,7 @@ async function signUp(req, res){
     try {
         const newUser = await AuthService.signUp(req.body)
 
-        await MailService.sendWelcomeMail(req.body.firstName,req.body.email)
+        MailService.sendWelcomeMail(req.body.firstName,req.body.email)
 
         return res
             .status(201)
