@@ -2,10 +2,12 @@ const express = require('express')
 const router = express.Router()
 const {CategoryController} = require('../../controllers')
 const {AuthMiddleware} = require('../../middlewares')
+const parser = require('../../middlewares/upload')
 
 router.post('/',
     AuthMiddleware.auth,
     AuthMiddleware.isAdmin,
+    parser.single('image'),
     CategoryController.createCategory
 )
 
@@ -26,3 +28,7 @@ router.put('/:id',
 )
 
 module.exports = router
+
+
+
+

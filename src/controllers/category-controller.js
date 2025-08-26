@@ -3,7 +3,16 @@ const {CategoryService} = require('../services')
 
 async function createCategory(req,res) {
     try {
-        const newCategory = await CategoryService.createCategory(req.body)
+
+        const data = req.body
+        const imageUrl = req.file.path
+
+        const categoryData = {
+            ...data,
+            image: imageUrl
+        }
+
+        const newCategory = await CategoryService.createCategory(categoryData)
         return res
                   .status(201)
                   .json({
