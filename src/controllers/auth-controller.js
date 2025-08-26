@@ -1,10 +1,13 @@
-const { AuthService } = require('../services')
+const { AuthService,MailService } = require('../services')
 
 require('dotenv').config()
 
 async function signUp(req, res){
     try {
         const newUser = await AuthService.signUp(req.body)
+
+        await MailService.sendWelcomeMail(req.body.firstName,req.body.email)
+
         return res
             .status(201)
             .json({
