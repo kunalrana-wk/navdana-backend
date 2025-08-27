@@ -47,6 +47,14 @@ const productSchema = new mongoose.Schema(
         //         createdAt: { type: Date, default: Date.now },
         //     },
         // ],
+        color: {
+            type: String,
+            required: true,
+        },
+        size: {
+            type: String,
+            required: true
+        },
         isActive: {
             type: Boolean,
             default: true,

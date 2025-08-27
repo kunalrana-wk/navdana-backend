@@ -4,32 +4,12 @@ const { ProductService } = require('../services')
 async function createProduct(req, res) {
   try {
 
-    const { name, description, category, price, stock } = req.body;
+    const { name, description, category, price, stock,color,size } = req.body;
+
+    console.log("Colour is :",color)
     if (!name || !description || !category || !price) {
       throw new Error("All required fields must be provided");
     }
-
-const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("cloudinary").v2;
-
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUD_KEY,
-  api_secret: process.env.CLOUD_SECRET
-});
-
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: "products",
-    allowed_formats: ["jpg", "png", "jpeg"]
-  }
-});
-
-const parser = multer({ storage });
-
-module.exports = parser;
 
     const images = req.files.map(file => ({ url: file.path, alt: name }));
 
@@ -42,10 +22,13 @@ module.exports = parser;
       price: Number(price),
       stock: Number(stock || 0),
       images,  
+      size,
+      color:color,
       ratings: { average: 0, count: 0 },
       isActive: true
     };
 
+    // console.log(req.body.color)
     const product = await ProductService.createProduct(productData);
 
     return res.status(201).json({ success: true, message: "Product Created Successfully", data: product });

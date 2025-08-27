@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
+    "dev:tunnel": "concurrently \"npm run dev\" \"lt --port 3000 --subdomain ten-flowers-deny\"",
     "h": "node src/index.js"
   },
   "keywords": [],
