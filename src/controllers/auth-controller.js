@@ -1,15 +1,15 @@
-const { AuthService,MailService } = require('../services')
+const { AuthService, MailService } = require('../services')
 const otpGenerator = require('otp-generator')
 const OTP = require('../models/otp-model')
 
 require('dotenv').config()
 
-async function sendOTP(req,res) {
+async function sendOTP(req, res) {
     try {
         const { email } = req.body
         // check user with that email already exist or not
         const user = await AuthService.userExist(email)
-        if(user){
+        if (user) {
             return res.status(400).json({
                 success: false,
                 message: "User Already Exist"
@@ -17,33 +17,33 @@ async function sendOTP(req,res) {
         }
 
         // generate-otp
-        let otp = otpGenerator.generate(6,{
+        let otp = otpGenerator.generate(6, {
             upperCaseAlphabets: false,
             lowerCaseAlphabets: false,
             specialChars: false
         })
 
-        const result = await OTP.findOne({otp:otp})
+        const result = await OTP.findOne({ otp: otp })
 
-        while(result) {
-            otp = otpGenerator.generate(6,{
+        while (result) {
+            otp = otpGenerator.generate(6, {
                 upperCaseAlphabets: false,
                 lowerCaseAlphabets: false,
                 specialChars: false
             })
-            result = await OTP.findOne({otp:otpGenerator})
+            result = await OTP.findOne({ otp: otpGenerator })
         }
 
-        const otpPayload = {email,otp}
+        const otpPayload = { email, otp }
         const otpBody = await OTP.create(otpPayload)
-        
+
         // return response 
         return res.status(200).json({
             success: false,
             message: "OTP Send Successfully",
             otp
         })
-        
+
     } catch (error) {
         return res.status(500).json({
             success: false,
@@ -53,17 +53,52 @@ async function sendOTP(req,res) {
     }
 }
 
-async function signUp(req, res){
+async function signUp(req, res) {
     try {
-        const newUser = await AuthService.signUp(req.body)
+        // const newUser = await AuthService.signUp(req.body)
+        const {email} = req.body
+        const existUser = await AuthService.userExist(req.body.email)
+        console.log(req.body)
 
-        MailService.sendWelcomeMail(req.body.firstName,req.body.email)
+        const {otp} = req.body
+        if (existUser) {
+            return res.status(400).json({
+                success: false,
+                message: "User Already Exist"
+            })
+        }
+
+        // find most recent otp to the particular ID from database
+        console.log("Before OTP")
+        const recentOTP = await OTP.find({ email })
+            .sort({ createdAt: -1 })
+            .limit(1)
+
+        console.log(recentOTP)
+
+        /// VALIDATE OTP
+        if (recentOTP.length === 0) {
+            // otp not exist
+            return res.status(400).json({
+                success: false,
+                message: "OTP not Found",
+            });
+
+        } else if (otp !== recentOTP[0].otp) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid OTP",
+            });
+        }
+
+        await AuthService.signUp(req.body)
+
+        MailService.sendWelcomeMail(req.body.firstName, req.body.email)
 
         return res
             .status(201)
             .json({
                 message: 'User Created Successfully',
-                userId: newUser._id
             })
     } catch (error) {
         return res
@@ -77,13 +112,13 @@ async function login(req, res) {
         const email = req.body.email
         const password = req.body.password
 
-        const result = await AuthService.login(email,password)
+        const result = await AuthService.login(email, password)
 
         const token = result.token
 
-        res.cookie('token',token,{
+        res.cookie('token', token, {
             httpOnly: true,
-            maxAge: 24*60*60*1000,
+            maxAge: 24 * 60 * 60 * 1000,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax'
         })
@@ -97,9 +132,9 @@ async function login(req, res) {
     }
 }
 
-async function logOut(req,res) {
+async function logOut(req, res) {
     try {
-        
+
 
         // clear cookies
         res.clearCookie('token')
@@ -117,4 +152,4 @@ async function logOut(req,res) {
     }
 }
 
-module.exports = { signUp,login,logOut,sendOTP }
+module.exports = { signUp, login, logOut, sendOTP }
