@@ -60,9 +60,14 @@ const login = async (email,password) => {
   };
 }
 
+async function userExist(email) {
+    return await userRepository.findByEmail(email)
+}
+
 
 
 module.exports = {
     signUp,
-    login   
+    login ,
+    userExist
 }

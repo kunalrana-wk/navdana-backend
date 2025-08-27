@@ -1,6 +1,57 @@
 const { AuthService,MailService } = require('../services')
+const otpGenerator = require('otp-generator')
+const OTP = require('../models/otp-model')
 
 require('dotenv').config()
+
+async function sendOTP(req,res) {
+    try {
+        const { email } = req.body
+        // check user with that email already exist or not
+        const user = await AuthService.userExist(email)
+        if(user){
+            return res.status(400).json({
+                success: false,
+                message: "User Already Exist"
+            })
+        }
+
+        // generate-otp
+        let otp = otpGenerator.generate(6,{
+            upperCaseAlphabets: false,
+            lowerCaseAlphabets: false,
+            specialChars: false
+        })
+
+        const result = await OTP.findOne({otp:otp})
+
+        while(result) {
+            otp = otpGenerator.generate(6,{
+                upperCaseAlphabets: false,
+                lowerCaseAlphabets: false,
+                specialChars: false
+            })
+            result = await OTP.findOne({otp:otpGenerator})
+        }
+
+        const otpPayload = {email,otp}
+        const otpBody = await OTP.create(otpPayload)
+        
+        // return response 
+        return res.status(200).json({
+            success: false,
+            message: "OTP Send Successfully",
+            otp
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Error in OTP Sending",
+            error: error.message
+        })
+    }
+}
 
 async function signUp(req, res){
     try {
@@ -66,4 +117,4 @@ async function logOut(req,res) {
     }
 }
 
-module.exports = { signUp,login,logOut }
+module.exports = { signUp,login,logOut,sendOTP }

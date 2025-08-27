@@ -14,4 +14,8 @@ router.post('/logout',
     AuthController.logOut
 )
 
+router.post('/verify',
+    AuthController.sendOTP
+)
+
 module.exports = router
