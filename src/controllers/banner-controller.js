@@ -34,7 +34,7 @@ async function getBanners(req,res) {
         return res.status(200).json({
             success: true,
             message: "Banners Fetched Successfully",
-            banners: banners
+            data: banners
         })
     } catch (error) {
         return res.status(400).json({
