@@ -1,20 +1,15 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true
-    },
+  
 
     firstName: {
         type: String,
-        required: true,
+        // required: true,
         trim: true
     },
 
-    lastName: {
+    name: {
         type: String,
         required: true,
         trim: true
@@ -22,12 +17,12 @@ const userSchema = new mongoose.Schema({
 
     password: {
         type: String,
-        required: true,
+        // required: true,
     },
 
     DOB: {
         type: Date,
-        required: true
+        // required: true
     },
     role: {
         type: String,
@@ -45,7 +40,7 @@ const userSchema = new mongoose.Schema({
 
     phoneNumber: {
         type: String,
-        required: true,
+        // required: true,
         trim: true,
         validate: {
             validator: function (v) {

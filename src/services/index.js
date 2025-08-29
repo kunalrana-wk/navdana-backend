@@ -5,5 +5,6 @@ module.exports = {
     ProductService: require('./product-service'),
     OrderService: require('./order-service'),
     BannerService: require('./banner-service'),
-    MailService: require('./mail-service')
+    MailService: require('./mail-service'),
+    CartService: require('./cart-service')
 }

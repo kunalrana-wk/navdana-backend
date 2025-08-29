@@ -4,45 +4,31 @@ const OTP = require('../models/otp-model')
 
 require('dotenv').config()
 
+
 async function sendOTP(req, res) {
     try {
         const { email } = req.body
-        // check user with that email already exist or not
-        const user = await AuthService.userExist(email)
-        if (user) {
-            return res.status(400).json({
-                success: false,
-                message: "User Already Exist"
-            })
-        }
-
         // generate-otp
-        let otp = otpGenerator.generate(6, {
-            upperCaseAlphabets: false,
-            lowerCaseAlphabets: false,
-            specialChars: false
-        })
-
-        const result = await OTP.findOne({ otp: otp })
-
-        while (result) {
+        let otp
+        let existingOtp
+        do {
             otp = otpGenerator.generate(6, {
                 upperCaseAlphabets: false,
                 lowerCaseAlphabets: false,
                 specialChars: false
             })
-            result = await OTP.findOne({ otp: otpGenerator })
-        }
+            existingOtp = await OTP.findOne({ otp })
+        } while (existingOtp)
 
-        const otpPayload = { email, otp }
-        const otpBody = await OTP.create(otpPayload)
+        console.log("Before OTP create")
+        await OTP.create({ email, otp })
+        console.log("After OTP create")
 
-        // return response 
         return res.status(200).json({
-            success: false,
-            message: "OTP Send Successfully",
-            otp
+            success: true,
+            message: "OTP sent to email successfully"
         })
+
 
     } catch (error) {
         return res.status(500).json({
@@ -56,17 +42,7 @@ async function sendOTP(req, res) {
 async function signUp(req, res) {
     try {
         // const newUser = await AuthService.signUp(req.body)
-        const {email} = req.body
-        const existUser = await AuthService.userExist(req.body.email)
-        console.log(req.body)
-
-        const {otp} = req.body
-        if (existUser) {
-            return res.status(400).json({
-                success: false,
-                message: "User Already Exist"
-            })
-        }
+        const { email, otp } = req.body
 
         // find most recent otp to the particular ID from database
         console.log("Before OTP")
@@ -91,7 +67,9 @@ async function signUp(req, res) {
             });
         }
 
-        await AuthService.signUp(req.body)
+        const name = req.body.name
+
+        await AuthService.signUp({ email, name })
 
         MailService.sendWelcomeMail(req.body.firstName, req.body.email)
 
@@ -109,10 +87,32 @@ async function signUp(req, res) {
 
 async function login(req, res) {
     try {
-        const email = req.body.email
-        const password = req.body.password
+        const { email, otp } = req.body
 
-        const result = await AuthService.login(email, password)
+        // find most recent otp to the particular ID from database
+        console.log("Before OTP")
+        const recentOTP = await OTP.find({ email })
+            .sort({ createdAt: -1 })
+            .limit(1)
+
+        console.log(recentOTP)
+
+        /// VALIDATE OTP
+        if (recentOTP.length === 0) {
+            // otp not exist
+            return res.status(400).json({
+                success: false,
+                message: "OTP not Found",
+            });
+
+        } else if (otp !== recentOTP[0].otp) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid OTP",
+            });
+        }
+
+        const result = await AuthService.login(email)
 
         const token = result.token
 

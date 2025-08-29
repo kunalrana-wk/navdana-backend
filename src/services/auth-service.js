@@ -17,19 +17,6 @@ function generateToken(user) {
 }
 
 const signUp = async (userData) => {
-
-    const {email,password} = userData
-
-    const userExist = await userRepository.findByEmail(email)
-
-    if(userExist){
-        throw new Error('User Already Exist')
-    }
-    
-    // hashing of password
-    const hashedPassword = await bcrypt.hash(password,10)
-    userData.password = hashedPassword
-
     const newUser = await userRepository.create(userData)
     return newUser
 }
@@ -37,12 +24,6 @@ const signUp = async (userData) => {
 const login = async (email,password) => {
     const user = await userRepository.findByEmail(email)
     if(!user){
-        throw new Error('Invalid Credentials')
-    }
-
-    const isMatch = await bcrypt.compare(password,user.password)
-
-    if(!isMatch) {
         throw new Error('Invalid Credentials')
     }
 

@@ -5,5 +5,6 @@ module.exports = {
     CategoryRepository: require('./category-repository'),
     ProductRepository: require('./product-repository'),
     OrderRepository: require('./order-repository'),
-    BannerRepository : require('./banner-repository')
+    BannerRepository : require('./banner-repository'),
+    CartRepository : require('./cart-repository')
 }
