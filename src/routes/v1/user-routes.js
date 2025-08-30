@@ -14,7 +14,7 @@ router.post('/logout',
     AuthController.logOut
 )
 
-router.post('/verify',
+router.post('/send-otp',
     AuthController.sendOTP
 )
 
