@@ -5,8 +5,8 @@ const { AuthMiddleware } = require('../../middlewares')
 const parser = require('../../middlewares/upload')
 
 router.post('/',
-    AuthMiddleware.auth,
-    AuthMiddleware.isAdmin,
+    // AuthMiddleware.auth,
+    // AuthMiddleware.isAdmin,
     parser.array("images",5),
     ProductController.createProduct
 )   
@@ -16,7 +16,7 @@ router.get('/',
 )
 
 router.get('/:id',
-    AuthMiddleware.auth,
+    // AuthMiddleware.auth,
     AuthMiddleware.isAdmin,
     ProductController.getProduct
 )

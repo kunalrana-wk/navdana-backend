@@ -58,7 +58,7 @@ async function getAllProducts(req, res) {
 async function getProduct(req, res) {
     try {
         const { id } = req.params
-        console.log("User ID is:",req.user.userId)
+        // console.log("User ID is:",req.user.userId)
         const product = await ProductService.getProduct(id)
         return res.status(200).json({
             success: false,

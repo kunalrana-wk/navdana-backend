@@ -5,13 +5,13 @@ const { OrderController } = require('../../controllers')
 const { AuthMiddleware } = require('../../middlewares')
 
 router.post('/',
-    AuthMiddleware.auth,
-    AuthMiddleware.isCustomer,
+    // AuthMiddleware.auth,
+    // AuthMiddleware.isCustomer,
     OrderController.createOrder
 )
 
 router.get('/user-orders',
-    AuthMiddleware.auth,
+    // AuthMiddleware.auth,
     OrderController.getUserOrders
 )
 
@@ -20,8 +20,8 @@ router.get('/:orderId',
 )
 
 router.get('/',
-    AuthMiddleware.auth,
-    AuthMiddleware.isAdmin,
+    // AuthMiddleware.auth,
+    // AuthMiddleware.isAdmin,
     OrderController.getAllOrders
 )
 
