@@ -17,7 +17,7 @@ router.get('/',
 
 router.get('/:id',
     // AuthMiddleware.auth,
-    AuthMiddleware.isAdmin,
+    // AuthMiddleware.isAdmin,
     ProductController.getProduct
 )
 

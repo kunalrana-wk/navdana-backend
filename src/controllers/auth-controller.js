@@ -44,7 +44,7 @@ async function signUp(req, res) {
         // const newUser = await AuthService.signUp(req.body)
         const { email, otp } = req.body
 
-
+        console.log("REQUEST BODY:",req.body)
         // find most recent otp to the particular ID from database
         console.log("Before OTP")
         const recentOTP = await OTP.find({ email })
@@ -70,6 +70,7 @@ async function signUp(req, res) {
 
         const name = req.body.name
 
+        console.log("Before Auth service")
         const {newUser,tokenObj} = await AuthService.signUp({ email, name })
 
         console.log("Token Object is:",tokenObj)
@@ -77,8 +78,8 @@ async function signUp(req, res) {
          res.cookie('token', tokenObj.token, {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax'
+            secure: false,
+            sameSite: 'none'
         })
 
         MailService.sendWelcomeMail(req.body.firstName, req.body.email)
@@ -86,6 +87,7 @@ async function signUp(req, res) {
         return res
             .status(201)
             .json({
+                token:tokenObj.token,
                 user: newUser,
                 message: 'User Created Successfully',
             })

@@ -8,26 +8,28 @@ const { UserRepository } = require('../repositories')
 const userRepository = new UserRepository()
 
 
-function generateToken(user) {
+function generateToken(id,role) {
+    console.log("GENERATED USER ID:",id)
+    console.log("GENERATED ROLE:",role)
     return jwt.sign(
-        { userId: user._id, role: user.role },
+        { userId: id, role: role },
         process.env.JWT_SECRET,
         { expiresIn: '1d' }
     )
 }
 
-async function sendAuthToken(user) {
+async function sendAuthToken(id,role,newUser) {
     try {
         // generate the token
-        const token = await generateToken(user)
+        const token =  generateToken(id,role)
         console.log("Token is:",token)
         return {
             token,
             user: {
-                id: user._id,
-                username: user.username,
-                email: user.email,
-                role: user.role
+                id: newUser._id,
+                username: newUser.username,
+                email: newUser.email,
+                role: newUser.role
             }
         }
     } catch (error) {
@@ -36,22 +38,37 @@ async function sendAuthToken(user) {
 }
 
 const signUp = async (userData) => {
-    const newUser = await userRepository.create(userData)
-    // generate and send authentication tokwn to the controller
-    const tokenObj = await sendAuthToken(userData.email)
-    return {newUser,tokenObj}
-}
+  try {
+    console.log("User data in Send Service:", userData);
 
-const login = async (email, password) => {
-    const user = await userRepository.findByEmail(email)
+    // create new user (no password)
+    const newUser = await userRepository.create(userData);
 
-    // if (!user) {
-    //     throw new Error('Invalid Credentials')
-    // }
+    console.log("After User created:", newUser);
 
-    // create a json web token and send it to the cookie 
-    return sendAuthToken(user)
-}
+    // generate token for new user
+    const tokenObj = await sendAuthToken(newUser._id,newUser.role,newUser);
+
+    return { newUser, tokenObj };
+  } catch (error) {
+    console.log("Error is:", error);
+  }
+};
+
+
+
+const login = async (email) => {
+  // after OTP verification is successful
+  const user = await userRepository.findByEmail(email);
+
+  if (!user) {
+    throw new Error("User not found. Please sign up first.");
+  }
+
+  console.log("USER IN LOGIN ROUTE",user)
+
+  return sendAuthToken(user._id,user.role,user);
+};
 
 async function userExist(email) {
     return await userRepository.findByEmail(email)

@@ -5,8 +5,8 @@ const { OrderController } = require('../../controllers')
 const { AuthMiddleware } = require('../../middlewares')
 
 router.post('/',
-    // AuthMiddleware.auth,
-    // AuthMiddleware.isCustomer,
+    AuthMiddleware.auth,
+    AuthMiddleware.isCustomer,
     OrderController.createOrder
 )
 
