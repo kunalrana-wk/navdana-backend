@@ -6,6 +6,7 @@ async function createOrder(userId, items, shippingAddress, paymentMethod) {
     let updatedItems = [];
     let itemsPrice = 0;
 
+    console.log("USER ID INSIDE CREATE ORDER SERVICE:",userId)
     // loop over items
     for (const item of items) {
         if (!item.quantity || item.quantity <= 0) {

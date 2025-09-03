@@ -18,6 +18,7 @@ function generateToken(id,role) {
     )
 }
 
+
 async function sendAuthToken(id,role,newUser) {
     try {
         // generate the token
@@ -79,5 +80,5 @@ async function userExist(email) {
 module.exports = {
     signUp,
     login,
-    userExist
+    userExist,
 }

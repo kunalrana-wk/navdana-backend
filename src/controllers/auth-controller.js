@@ -1,6 +1,7 @@
 const { AuthService, MailService } = require('../services')
 const otpGenerator = require('otp-generator')
 const OTP = require('../models/otp-model')
+const { UserRepository } = require('../repositories')
 
 require('dotenv').config()
 
@@ -68,7 +69,7 @@ async function signUp(req, res) {
             });
         }
 
-        const name = req.body.name
+        const name = "user_name"
 
         console.log("Before Auth service")
         const {newUser,tokenObj} = await AuthService.signUp({ email, name })
@@ -137,11 +138,26 @@ async function login(req, res) {
         })
 
         res.status(200).json({
+            token:token,
             message: 'Login successful',
             user: result.user
         });
     } catch (error) {
         res.status(400).json({ error: error.message })
+    }
+}
+
+async function checkSignUpOrLogin(req,res) {
+    try {
+        // check user in the database
+        const user = await AuthService.userExist(req.body.email)
+        if(user){
+            await login(req,res)
+        } else {
+            await signUp(req,res)
+        }
+    } catch (error) {
+        
     }
 }
 
@@ -165,4 +181,4 @@ async function logOut(req, res) {
     }
 }
 
-module.exports = { signUp, login, logOut, sendOTP }
+module.exports = { signUp, login, logOut, sendOTP,checkSignUpOrLogin }

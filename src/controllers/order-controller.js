@@ -2,15 +2,15 @@ const { OrderService } = require('../services')
 
 async function createOrder(req,res) {
     try {
-        const { user,items, shippingAddress, paymentMethod } = req.body
+        const { items, shippingAddress, paymentMethod } = req.body
 
         // fetched id from authentication middleware
 
         console.log("All Order Details:",req.body)
 
-        // const userId = req.user.userId
+        const userId = req.user.userId
         // console.log("Uer id is:",req.user)
-        const order = await OrderService.createOrder(user,items,shippingAddress,paymentMethod)
+        const order = await OrderService.createOrder(userId,items,shippingAddress,paymentMethod)
 
         return res.status(201).json({
             success: true,
