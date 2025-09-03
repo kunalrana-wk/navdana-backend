@@ -6,32 +6,37 @@ async function createOrder(userId, items, shippingAddress, paymentMethod) {
     let updatedItems = [];
     let itemsPrice = 0;
 
-    console.log("USER ID INSIDE CREATE ORDER SERVICE:",userId)
-    // loop over items
+    console.log("USER ID INSIDE CREATE ORDER SERVICE:", userId);
+
     for (const item of items) {
         if (!item.quantity || item.quantity <= 0) {
             throw new Error(`Invalid quantity for product: ${item.product}`);
         }
 
-        // check availability + update stock
-        console.log("Before Check Avail.")
+        // ✅ check availability of specific variant
+        console.log("Before Check Avail.");
         const product = await orderRepository.checkAvailabityAndUpdate(item);
-        console.log(item)
-        if (!product) {
-            throw new Error(`Not enough stock for product: ${item.product}`);
-        }
-        console.log('After Check Avail')
+        console.log("After Check Avail.");
 
-        // calculate price from DB (not frontend)
+        if (!product) {
+            throw new Error(
+                `Not enough stock for product: ${item.product}, variant: ${item.color} - ${item.size}`
+            );
+        }
+
+        // ✅ calculate price from DB
         const quantityPrice = product.price * item.quantity;
         itemsPrice += quantityPrice;
 
-        // prepare item for order
+        // ✅ save variant details also in the order
         updatedItems.push({
             product: product._id,
             name: product.name,
             quantity: item.quantity,
-            price: product.price
+            price: product.price,
+            size: item.size,
+            color: item.color,
+            sku: item.sku
         });
     }
 
@@ -40,8 +45,9 @@ async function createOrder(userId, items, shippingAddress, paymentMethod) {
     const taxPrice = 0; // you can add GST/VAT logic later
     const totalPrice = itemsPrice + shippingPrice + taxPrice;
 
-    // create order in DB
-    console.log("Before Order Creation")
+    console.log("Before Order Creation");
+
+    // ✅ create order in DB
     const order = await orderRepository.create({
         user: userId,
         items: updatedItems,
@@ -55,12 +61,15 @@ async function createOrder(userId, items, shippingAddress, paymentMethod) {
         }
     });
 
-    console.log("ORDER INITIATED IS:",order)
-    console.log("USER ID INSIDE ORDER SERVICE IS:",userId)
-    await orderRepository.addOrderToUser(order._id,userId)
-    console.log("AFTER ORDER UPDATION:",order)
+    console.log("ORDER INITIATED IS:", order);
+    console.log("USER ID INSIDE ORDER SERVICE IS:", userId);
+
+    await orderRepository.addOrderToUser(order._id, userId);
+
+    console.log("AFTER ORDER UPDATION:", order);
     return order;
 }
+
 
 async function getUserOrders(userId) {
     const userOrders = await orderRepository.getAll({user:userId})

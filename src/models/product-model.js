@@ -26,11 +26,12 @@ const productSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
-        stock: {
-            type: Number,
-            required: true,
-            default: 0,
-        },
+        variant:[{
+            color: {type:String,required:true},
+            size: {type:String,required:true},
+            stock: {type:Number,required:true,default:0},
+            sku: {type:String,unique:true}
+        }],
         ratings: {
             average: { type: Number, default: 0 }, // avg rating (1–5)
             count: { type: Number, default: 0 }, // number of reviews
@@ -47,14 +48,6 @@ const productSchema = new mongoose.Schema(
         //         createdAt: { type: Date, default: Date.now },
         //     },
         // ],
-        color: {
-            type: String,
-            required: true,
-        },
-        size: {
-            type: String,
-            required: true
-        },
         isActive: {
             type: Boolean,
             default: true,

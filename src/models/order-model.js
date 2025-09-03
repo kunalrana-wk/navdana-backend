@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema(
     {
@@ -17,6 +17,11 @@ const orderSchema = new mongoose.Schema(
                 name: { type: String, required: true },
                 quantity: { type: Number, required: true },
                 price: { type: Number, required: true },
+
+                // ✅ New fields for variants
+                size: { type: String },  
+                color: { type: String }, 
+                sku: { type: String },   // optional but helpful for inventory tracking
             },
         ],
         shippingAddress: {
