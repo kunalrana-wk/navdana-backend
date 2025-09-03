@@ -55,6 +55,10 @@ async function createOrder(userId, items, shippingAddress, paymentMethod) {
         }
     });
 
+    console.log("ORDER INITIATED IS:",order)
+    console.log("USER ID INSIDE ORDER SERVICE IS:",userId)
+    await orderRepository.addOrderToUser(order._id,userId)
+    console.log("AFTER ORDER UPDATION:",order)
     return order;
 }
 
