@@ -10,10 +10,20 @@ const apiRoutes = require('./routes')
 const { ProductModel } = require('./models')
 
 
+
+const allowedOrigins = [
+  "https://navdana.com",
+  "https://navdana.com/",
+  "https://www.navdana.com",
+  "https://www.navdana.com/"
+];
+
 app.use(cors({
-  origin: ["https://navdana.com", "https://www.navdana.com/"], // add multiple URLs here
+  origin: allowedOrigins,
   credentials: true,
 }));
+
+app.options("*", cors()); // handle preflight
 
 app.use(express.json())
 app.use(cookieParser())
