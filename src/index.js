@@ -8,22 +8,22 @@ const { ProductModel } = require('./models')
 const app = express()
 
 // Allowed origins (no duplicates, no trailing slashes)
-const allowedOrigins = [
-  "https://navdana.com",
-  "https://www.navdana.com"
-]
+// const allowedOrigins = [
+//   "https://navdana.com",
+//   "https://www.navdana.com"
+// ]
 
 // CORS middleware
 app.use(cors({
-  origin: allowedOrigins,
+  origin: 'https://www.navdana.com',
   credentials: true
 }))
 
-// Preflight requests for all routes
-app.options("*", cors({
-  origin: allowedOrigins,
-  credentials: true
-}))
+// // Preflight requests for all routes
+// app.options("*", cors({
+//   origin: allowedOrigins,
+//   credentials: true
+// }))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
