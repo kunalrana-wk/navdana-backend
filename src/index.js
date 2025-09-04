@@ -9,8 +9,9 @@ const apiRoutes = require('./routes')
 
 const { ProductModel } = require('./models')
 
+
 app.use(cors({
-  origin: "https://navdana.com/",  
+  origin: ["https://navdana.com", "https://www.navdana.com/"], // add multiple URLs here
   credentials: true,
 }));
 
