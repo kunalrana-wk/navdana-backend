@@ -31,7 +31,7 @@ app.get('/test',async(req,res) => {
 } )
 
 app.listen(5000,() => {
-    console.log(`Server is listening at PORT ${4000}`)
+    console.log(`Server is listening at PORT ${5000}`)
 })
 
 
