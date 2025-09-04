@@ -13,9 +13,9 @@ const { ProductModel } = require('./models')
 
 const allowedOrigins = [
   "https://navdana.com",
-  "https://navdana.com/",
+  "https://navdana.com",
   "https://www.navdana.com",
-  "https://www.navdana.com/"
+  "https://www.navdana.com"
 ];
 
 app.use(cors({
