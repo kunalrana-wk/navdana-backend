@@ -10,7 +10,7 @@ const apiRoutes = require('./routes')
 const { ProductModel } = require('./models')
 
 app.use(cors({
-  origin: "http://localhost:5173",  
+  origin: "https://navdana.com/",  
   credentials: true,
 }));
 
